@@ -6,7 +6,9 @@ int whiteLED = 9;
 // declare variables
 int delayTime = 1000; // time delay between lights on/off
 int randNumber;
-int whiteLEDOn; 
+int whiteLEDOn;
+unsigned long lastButtonPress;
+int score = 0;
 
 //setup interrupt, button input and LED outputs
 void setup() {
@@ -35,11 +37,26 @@ void loop() {
 
 
 void playerOneInput() {
-  bool ledsOn = false;
-  for (int i = 0; i < 3; i++){
-    if (digitalRead(ledPin[i])){
-      ledsOn = true;
+  if (millis() - lastButtonPress > 100){    
+    bool ledsOn = false;
+    for (int i = 0; i < 3; i++){
+      if (digitalRead(ledPin[i])){
+        ledsOn = true;
+      }
     }
-  }
-  digitalWrite(whiteLED, ledsOn);
+    
+    if (ledsOn){
+      // Win point
+      score++;
+      digitalWrite(whiteLED, HIGH);
+      digitalWrite(ledPin[randNumber], LOW);
+    }
+    else{
+      // Lost point
+      score--;
+    }
+  
+    Serial.println(score);
+    lastButtonPress = millis();
+  } 
 }
