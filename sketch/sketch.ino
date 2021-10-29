@@ -53,7 +53,10 @@ void playerOneInput() {
     }
     else{
       // Lost point
-      score--;
+      if (score > 0){
+        score--;
+      }
+      
     }
   
     Serial.println(score);
