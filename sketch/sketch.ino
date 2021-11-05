@@ -9,10 +9,14 @@ int randNumber;
 int whiteLEDOn;
 unsigned long lastButtonPress;
 int score = 0;
+int winScore = 3;
+int totalWins = 0;
+int winningSequence = 0;
+int win = 0;
 
 //setup interrupt, button input and LED outputs
 void setup() {
-  attachInterrupt(0, playerOneInput, FALLING); // specify interrupt routine
+  attachInterrupt(0, buttonPressed, FALLING); // specify interrupt routine
   for (int i=0; i<3; i++){
     pinMode(ledPin[i], OUTPUT);
   }
@@ -33,11 +37,30 @@ void loop() {
   if(whiteLEDOn == HIGH){
     digitalWrite(whiteLED, LOW);
   }  //if whiteLED on = turn it off
+
+  if (score == winScore){
+    winningSequence = 1;
+    // DO NOT REMOVE
+    Serial.print("");
+    //delay(100);
+    flashLEDS();
+    winningSequence = 0;
+    score = 0;
+    totalWins++;
+  }
+}
+
+void buttonPressed() {
+  Serial.print("winningSequence: ");
+  Serial.println(winningSequence);
+  if (winningSequence == 0){
+    playerOneInput();
+  }
 }
 
 
 void playerOneInput() {
-  if (millis() - lastButtonPress > 100){    
+  if (millis() - lastButtonPress > 100){
     bool ledsOn = false;
     for (int i = 0; i < 3; i++){
       if (digitalRead(ledPin[i])){
@@ -62,4 +85,19 @@ void playerOneInput() {
     Serial.println(score);
     lastButtonPress = millis();
   } 
+}
+
+void flashLEDS(){
+  for (int i = 0; i < 20; i++){
+    for (int j = 0; j < 3; j++){
+      digitalWrite(ledPin[j], HIGH);
+      digitalWrite(whiteLED, HIGH);
+    }
+    delay(150);
+    for (int j = 0; j < 3; j++){
+      digitalWrite(ledPin[j], LOW);
+      digitalWrite(whiteLED, LOW);
+    }
+    delay(150);
+  }
 }
