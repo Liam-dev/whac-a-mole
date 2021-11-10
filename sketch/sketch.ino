@@ -107,8 +107,8 @@ void buttonPressed() {
 
 
 void playerInput(int button) {
-	// Ensure the last button press was greater than 100ms ago to stop the buttons registering multiple false presses
-	if (millis() - lastButtonPress > 100){
+	// Ensure the last button press was greater than 300ms ago to stop the buttons registering multiple false presses
+	if (millis() - lastButtonPress > 300){
 		lastButtonPress = millis();
 
 		// Determine if any of the LEDs are on
@@ -137,9 +137,7 @@ void playerInput(int button) {
 				lcd.print("Green wins point");
 			}	
 
-			// Move servo to show who is in the lead (and by how much)
-			int angle = ((scores[0] - scores[1]) * 90 / winScore) + 90;
-			servo.write(angle);
+			
 
 			// Turn on win LED indicator and turn off the other LEDs
 			digitalWrite(winLEDPins[0 + button], HIGH);
@@ -164,6 +162,22 @@ void playerInput(int button) {
 				lcd.print("Green lost point");
 			}
 		}
+
+		// Move servo to show who is in the lead (and by how much)
+		int angle;
+		//angle = ((scores[0] - scores[1]) * 90 / winScore) + 90;
+
+		if (scores[0] == scores[1]){
+			angle = 90;
+		}
+		else if (scores[0] > scores[1]){
+			angle = 120;
+		}
+		else{
+			angle = 60;
+		}
+
+		servo.write(angle);
 
 		// Display current scores on the lcd display
 		lcd.setCursor(10, 0);
